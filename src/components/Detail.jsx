@@ -6,7 +6,7 @@ import {useNavigate} from 'react-router-dom'
 export default function Detail() {
     const navigate = useNavigate()
     const {target, dataPlanets  } = useContext(GeneralContext);
-    const detailPage = dataPlanets.results.filter((item)=> item.name === target)
+    const detailPage = dataPlanets?.results?.filter((item)=> item.name === target)
     console.log(detailPage)
 
 const backClick = ()=>{
@@ -20,7 +20,7 @@ const backClick = ()=>{
             <div>
                 <button className='detail-btn' onClick={backClick}>X</button>
                 {
-                    detailPage.map((item)=>(
+                    detailPage?.map((item)=>(
                         <div className='detail-card'>
                             <img className='detail-img' src="https://www.denofgeek.com/wp-content/uploads/2020/06/star-wars-outrider.jpg?fit=1024%2C552" alt="" />
                             <h3>Model : {item.model}</h3>

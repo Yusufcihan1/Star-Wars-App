@@ -19,20 +19,22 @@ import TextField from '@mui/material/TextField';
 export default function Planets() {
     const {target, setTarget, dataPlanets , setDataPlanets} = useContext(GeneralContext);
     const [isLoading , setLoading] = useState(true);
-    const [urlPlanets ,setUrlPlanets] = useState(`https://swapi.dev/api/starships/?page=1`)
+    const [urlPlanets ,setUrlPlanets] = useState(`?page=1`)
     const navigate = useNavigate()
     const [filterText , setFilterText] = useState('')
 
-    
+   const  getting = async (urlParam, baseURL='https://swapi.dev/api/starships/')=> {
+   await  axios.get(baseURL+ urlParam)
+    .then((res) =>{
+        setDataPlanets(res.data);
+        setLoading(false);
+        console.log(res)
+    });
      
+   } 
   
     useEffect(()=>{
-        axios.get(urlPlanets)
-        .then((res) =>{
-            setDataPlanets(res.data);
-            setLoading(false);
-            console.log(res)
-        });
+       getting(urlPlanets)
         
     },[urlPlanets])
 
@@ -59,7 +61,7 @@ export default function Planets() {
 		);
 	}
 
-  const filtered = dataPlanets.results.filter((item)=>{
+  const filtered = dataPlanets?.results.filter((item)=>{
     return Object.keys(item).some((key)=> item[key].toString().toLowerCase().includes(filterText.toLowerCase()))
     
   })
@@ -96,20 +98,25 @@ export default function Planets() {
     });
 
     function nextPlanetPage() {
-		setLoading(true);
-		setUrlPlanets(dataPlanets.next);
+		getting(dataPlanets.next )
 	}
     function previousPage() {
 		setLoading(true);
 		setUrlPlanets(dataPlanets.previous);
 	}
   
+const handleFilterInput = (e)=>{
+    const value = e.target.value;
+    setFilterText(value)
+    const searchParam = '?search=' + value
+    getting(searchParam)
 
+}
   
   return (
         <div className='planets'> 
             <h1 className='title'>StarShips</h1>
-            <TextField value={filterText} onChange={(e)=>setFilterText(e.target.value)} className='textfield' id="filled-basic" label="Search StarShip" variant="filled" style={{backgroundColor: '#eeeeee' , borderRadius:'10px'}} />
+            <TextField value={filterText} onChange={handleFilterInput} className='textfield' id="filled-basic" label="Search StarShip" variant="filled" style={{backgroundColor: '#eeeeee' , borderRadius:'10px'}} />
             <main className='cards'>{allPlanetsOnPage}</main>
             <div className='buttons'>
             <button
